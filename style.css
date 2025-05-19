@@ -69,8 +69,6 @@ body {
     padding: 10px 0;
 }
 .footer div{
-    border: 1px solid #4a4949;
-    background-color: aliceblue;
     border-radius: 2px;
 }
 
@@ -304,11 +302,14 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    justify-content: center;
+
 }
 
 .songtime {
     width: 125px;
-    color: black;
+    color: rgb(7, 7, 7);
     padding: 0 12px;
 }
 
@@ -345,9 +346,8 @@ body {
         top: 0;
     }
 
-    .songinfo,
     .songtime {
-        width: auto;
+        width: auto; 
     }
 
     .left .close {
