@@ -101,7 +101,7 @@ next.addEventListener("click", () => navigateSong("Next"));
 
 // Update UI for song playback
 audio.addEventListener("ended", () => {
-    document.querySelector("#play").src = "img/play.svg";
+    document.querySelector("#play").src = "img/Play.svg";
 });
 
 audio.addEventListener("timeupdate", () => {
@@ -281,7 +281,7 @@ async function main() {
             document.querySelector("#play").src = "img/pause.svg";
         } else {
             audio.pause();
-            document.querySelector("#play").src = "img/play.svg";
+            document.querySelector("#play").src = "img/Play.svg";
         }
     });
 
