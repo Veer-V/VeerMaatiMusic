@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/songs/(.*)",
+      "destination": "/api/songs"
+    }
+  ]
+}
