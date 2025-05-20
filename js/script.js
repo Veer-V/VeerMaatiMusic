@@ -116,7 +116,7 @@ audio.addEventListener("timeupdate", () => {
 async function displayAlbums() {
     console.log("Fetching albums...");
     try {
-        let response = await fetch(`/songs/`);
+        let response = await fetch("https://veer-maati-music.vercel.app/songs/");
         let htmlText = await response.text();
 
         let div = document.createElement("div");
