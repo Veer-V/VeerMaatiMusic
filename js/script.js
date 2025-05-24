@@ -41,10 +41,10 @@ const playMusic = async (track) => {
         console.error("No track provided.");
         return;
     }
-    
+
     let encodedTrack = encodeURIComponent(track);
     let sourceURL = `/songs/${currfolder}/${encodedTrack}`;
-    
+
     try {
         let response = await fetch(sourceURL);
         if (!response.ok) throw new Error("File not found or unsupported format");
@@ -58,24 +58,24 @@ const playMusic = async (track) => {
         console.error("Error playing audio:", error);
     }
     if ('mediaSession' in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-        title: track,  
-        artist: "Unknown Artist",  
-        album: currfolder,  
-        artwork: [{ src: "/songs/" + currfolder + "/cover.jpg", sizes: "500x500", type: "image/png" }]
-    });
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: track,
+            artist: "Unknown Artist",
+            album: currfolder,
+            artwork: [{ src: "/songs/" + currfolder + "/cover.jpg", sizes: "500x500", type: "image/png" }]
+        });
 
-    navigator.mediaSession.setActionHandler("play", () => audio.play());
-    navigator.mediaSession.setActionHandler("pause", () => audio.pause());
-    navigator.mediaSession.setActionHandler("previoustrack", () => {
-        let index = songs.indexOf(track);
-        if (index > 0) playMusic(songs[index - 1]);
-    });
-    navigator.mediaSession.setActionHandler("nexttrack", () => {
-        let index = songs.indexOf(track);
-        if (index < songs.length - 1) playMusic(songs[index + 1]);
-    });
-}
+        navigator.mediaSession.setActionHandler("play", () => audio.play());
+        navigator.mediaSession.setActionHandler("pause", () => audio.pause());
+        navigator.mediaSession.setActionHandler("previoustrack", () => {
+            let index = songs.indexOf(track);
+            if (index > 0) playMusic(songs[index - 1]);
+        });
+        navigator.mediaSession.setActionHandler("nexttrack", () => {
+            let index = songs.indexOf(track);
+            if (index < songs.length - 1) playMusic(songs[index + 1]);
+        });
+    }
 };
 // Function to handle previous and next actions
 function navigateSong(direction) {
@@ -116,7 +116,7 @@ audio.addEventListener("timeupdate", () => {
 async function displayAlbums() {
     console.log("Fetching albums...");
     try {
-        let response = await fetch("https://veer-maati-music.vercel.app/songs/");
+        let response = await fetch("/songs/");
         let htmlText = await response.text();
 
         let div = document.createElement("div");
@@ -196,36 +196,36 @@ function displaySongList(songs) {
         }
     });
     async function displaySongList(songs) {
-    let songUL = document.querySelector(".songList ul"); // Right-side container
-    let cycleContainer = document.querySelector(".cycle-container ul"); // Left quick selection
+        let songUL = document.querySelector(".songList ul"); // Right-side container
+        let cycleContainer = document.querySelector(".cycle-container ul"); // Left quick selection
 
-    if (!songUL || !cycleContainer) {
-        console.error("Error: song list or cycle container not found in the DOM.");
-        return;
-    }
-
-    songUL.innerHTML = ""; // Clear previous list
-    cycleContainer.innerHTML = ""; // Clear left-side selection
-
-    for (const song of songs) {
-        let songName = decodeURIComponent(song).replace(/.mp3$/i, "").trim(); // ✅ Remove ".mp3"
-
-        // ✅ Fetch song title from info.json
-        let songTitle = "Unknown Artist"; // Default text
-        try {
-            let metadataResponse = await fetch(`/songs/${currfolder}/info.json`);
-            if (metadataResponse.ok) {
-                let metadata = await metadataResponse.json();
-                if (metadata[songName]) {
-                    songTitle = metadata[songName].title || "Unknown Artist"; // Use title for the specific song
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching song metadata:", error);
+        if (!songUL || !cycleContainer) {
+            console.error("Error: song list or cycle container not found in the DOM.");
+            return;
         }
 
-        let listItem = document.createElement("li");
-        listItem.innerHTML = `
+        songUL.innerHTML = ""; // Clear previous list
+        cycleContainer.innerHTML = ""; // Clear left-side selection
+
+        for (const song of songs) {
+            let songName = decodeURIComponent(song).replace(/.mp3$/i, "").trim(); // ✅ Remove ".mp3"
+
+            // ✅ Fetch song title from info.json
+            let songTitle = "Unknown Artist"; // Default text
+            try {
+                let metadataResponse = await fetch(`/songs/${currfolder}/info.json`);
+                if (metadataResponse.ok) {
+                    let metadata = await metadataResponse.json();
+                    if (metadata[songName]) {
+                        songTitle = metadata[songName].title || "Unknown Artist"; // Use title for the specific song
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching song metadata:", error);
+            }
+
+            let listItem = document.createElement("li");
+            listItem.innerHTML = `
             <img class="invert" src="img/music.svg" alt="Music">
             <div class="info">
                 <div>${songName}</div>  <!-- ✅ Cleaned song name -->
@@ -233,20 +233,20 @@ function displaySongList(songs) {
             </div>
             <div class="playnow"><span>Play Now</span><img class="invert" src="img/Play.svg" alt="Play"></div>
         `;
-        songUL.appendChild(listItem);
+            songUL.appendChild(listItem);
 
-        let cycleItem = document.createElement("li");
-        cycleItem.innerHTML = `<span>${songName}</span>`;
-        cycleContainer.appendChild(cycleItem);
+            let cycleItem = document.createElement("li");
+            cycleItem.innerHTML = `<span>${songName}</span>`;
+            cycleContainer.appendChild(cycleItem);
+        }
+
+        songUL.addEventListener("click", playSongFromList);
+        cycleContainer.addEventListener("click", playSongFromList);
+
+        // Hide the elements from view
+        songUL.style.display = "none";
+        cycleContainer.style.display = "none";
     }
-
-    songUL.addEventListener("click", playSongFromList);
-    cycleContainer.addEventListener("click", playSongFromList);
-
-    // Hide the elements from view
-    songUL.style.display = "none";
-    cycleContainer.style.display = "none";
-}
 }
 
 // ✅ **Volume Control & Mute Feature**
